@@ -6,6 +6,8 @@ const container = document.getElementById('fieldWrapper');
 
 let field = [[null, null, null], [null, null, null], [null, null, null]]
 
+let stepNumber = 0;
+
 startGame();
 addResetListener();
 
@@ -32,6 +34,11 @@ function cellClickHandler (row, col) {
     // Пиши код тут
     console.log(`Clicked on cell: ${row}, ${col}`);
 
+    if (!field[row][col]) {
+        field[row][col] = 'x'
+        renderSymbolInCell(CROSS, row, col);
+        stepNumber++;
+    }
 
     /* Пользоваться методом для размещения символа в клетке так:
         renderSymbolInCell(ZERO, row, col);
