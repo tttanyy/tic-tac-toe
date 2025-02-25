@@ -4,6 +4,8 @@ const EMPTY = ' ';
 
 const container = document.getElementById('fieldWrapper');
 
+let field = [[null, null, null], [null, null, null], [null, null, null]]
+
 startGame();
 addResetListener();
 
