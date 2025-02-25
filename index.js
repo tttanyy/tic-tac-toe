@@ -4,18 +4,26 @@ const EMPTY = ' ';
 
 const container = document.getElementById('fieldWrapper');
 
-let field = [[null, null, null], [null, null, null], [null, null, null]]
-
+let field = [];
 let stepNumber = 0;
 let currentPlayer = CROSS;
 let isWin = false;
+let gridSize = 3; 
 
 
 startGame();
-addResetListener();
 
 function startGame() {
-    renderGrid(3);
+    const sizeInput = prompt("Введите размер игрового поля", "3");
+    if (sizeInput && !isNaN(sizeInput) && parseInt(sizeInput) > 0) {
+        gridSize = parseInt(sizeInput);
+    } else {
+        alert("Некорректный размер. Используется значение по умолчанию: 3x3");
+        gridSize = 3;
+    }
+
+    field = Array.from({ length: gridSize }, () => Array(gridSize).fill(null));
+    renderGrid(gridSize);
 }
 
 function renderGrid(dimension) {
@@ -51,9 +59,7 @@ function cellClickHandler(row, col) {
             return;
         }
 
-        if (!isWin) {
-            currentPlayer = currentPlayer === CROSS ? ZERO : CROSS;
-        }
+        currentPlayer = currentPlayer === CROSS ? ZERO : CROSS;
     } else {
         console.log('Клетка уже занята!');
     }
@@ -67,26 +73,27 @@ function checkWinner() {
     const size = field.length;
 
     for (let i = 0; i < size; i++) {
-        if (field[i][0] && field[i][0] === field[i][1] && field[i][0] === field[i][2]) {
-            highlightCells([[i, 0], [i, 1], [i, 2]]);
+        if (field[i][0] && field[i].every(cell => cell === field[i][0])) {
+            highlightCells(field.map((_, col) => [i, col]));
             return field[i][0];
         }
     }
 
-    for (let i = 0; i < size; i++) {
-        if (field[0][i] && field[0][i] === field[1][i] && field[0][i] === field[2][i]) {
-            highlightCells([[0, i], [1, i], [2, i]]);
-            return field[0][i];
+    for (let j = 0; j < size; j++) {
+        if (field[0][j] && field.every(row => row[j] === field[0][j])) {
+            highlightCells(field.map((_, row) => [row, j]));
+            return field[0][j];
         }
     }
 
-    if (field[0][0] && field[0][0] === field[1][1] && field[0][0] === field[2][2]) {
-        highlightCells([[0, 0], [1, 1], [2, 2]]);
+    if (field[0][0] && field.every((row, idx) => row[idx] === field[0][0])) {
+        highlightCells(field.map((_, idx) => [idx, idx]));
         return field[0][0];
     }
-    if (field[0][2] && field[0][2] === field[1][1] && field[0][2] === field[2][0]) {
-        highlightCells([[0, 2], [1, 1], [2, 0]]);
-        return field[0][2];
+
+    if (field[0][size - 1] && field.every((row, idx) => row[size - 1 - idx] === field[0][size - 1])) {
+        highlightCells(field.map((_, idx) => [idx, size - 1 - idx]));
+        return field[0][size - 1];
     }
 
     return null;
@@ -118,20 +125,14 @@ function addResetListener() {
 
 
 function resetClickHandler() {
-    console.log('reset!');
-
-    field = [
-        [null, null, null],
-        [null, null, null],
-        [null, null, null]
-    ];
-
+    field = Array.from({ length: gridSize }, () => Array(gridSize).fill(null));
     stepNumber = 0;
     currentPlayer = CROSS;
     isWin = false;
-    startGame();
+    renderGrid(gridSize);
 }
 
+addResetListener();
 
 /* Test Function */
 /* Победа первого игрока */
