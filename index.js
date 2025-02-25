@@ -45,7 +45,7 @@ function cellClickHandler(row, col) {
         const winner = checkWinner();
         if (winner) {
             alert(`Победил игрок ${winner}!`);
-            isWin = true; 
+            isWin = true;
         } else if (stepNumber === field.length * field.length) {
             alert("Победила дружба");
             return;
@@ -116,8 +116,20 @@ function addResetListener() {
     resetButton.addEventListener('click', resetClickHandler);
 }
 
+
 function resetClickHandler() {
     console.log('reset!');
+
+    field = [
+        [null, null, null],
+        [null, null, null],
+        [null, null, null]
+    ];
+
+    stepNumber = 0;
+    currentPlayer = CROSS;
+    isWin = false;
+    startGame();
 }
 
 
