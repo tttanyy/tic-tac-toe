@@ -33,28 +33,55 @@ function renderGrid (dimension) {
     }
 }
 
-function cellClickHandler (row, col) {
+function cellClickHandler(row, col) {
     console.log(`Clicked on cell: ${row}, ${col}`);
-
     if (!field[row][col]) {
-        field[row][col] = currentPlayer; 
-        renderSymbolInCell(currentPlayer, row, col); 
-
+        field[row][col] = currentPlayer;
+        renderSymbolInCell(currentPlayer, row, col);
         stepNumber++;
 
-        if (stepNumber === field.length * field.length) {
+        const winner = checkWinner();
+        if (winner) {
+            alert(`Победил игрок ${winner}!`);
+            isWin = true; // Установить флаг победы
+        } else if (stepNumber === field.length * field.length) {
             alert("Победила дружба");
             return;
         }
 
-        currentPlayer = currentPlayer === CROSS ? ZERO : CROSS;
+        if (!isWin) {
+            currentPlayer = currentPlayer === CROSS ? ZERO : CROSS;
+        }
     } else {
-        console.log('Cell is already taken!');
+        console.log('Клетка уже занята!');
     }
+
 
     /* Пользоваться методом для размещения символа в клетке так:
         renderSymbolInCell(ZERO, row, col);
      */
+}
+
+function checkWinner() {
+    const size = field.length;
+
+    for (let i = 0; i < size; i++) {
+        if (field[i][0] && field[i][0] === field[i][1] && field[i][0] === field[i][2]) {
+            return field[i][0];
+        }
+        if (field[0][i] && field[0][i] === field[1][i] && field[0][i] === field[2][i]) {
+            return field[0][i];
+        }
+    }
+
+    if (field[0][0] && field[0][0] === field[1][1] && field[0][0] === field[2][2]) {
+        return field[0][0]; 
+    }
+    if (field[0][2] && field[0][2] === field[1][1] && field[0][2] === field[2][0]) {
+        return field[0][2]; 
+    }
+
+    return null;
 }
 
 function renderSymbolInCell (symbol, row, col, color = '#333') {
