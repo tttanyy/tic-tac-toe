@@ -8,17 +8,17 @@ let field = [];
 let stepNumber = 0;
 let currentPlayer = CROSS;
 let isWin = false;
-let gridSize = 3; 
+let gridSize = 3;
 
 
 startGame();
 
 function startGame() {
-    const sizeInput = prompt("Введите размер игрового поля", "3");
+    const sizeInput = prompt('Введите размер игрового поля', '3');
     if (sizeInput && !isNaN(sizeInput) && parseInt(sizeInput) > 0) {
         gridSize = parseInt(sizeInput);
     } else {
-        alert("Некорректный размер. Используется значение по умолчанию: 3x3");
+        alert('Некорректный размер. Используется значение по умолчанию: 3x3');
         gridSize = 3;
     }
 
@@ -42,7 +42,7 @@ function renderGrid(dimension) {
 }
 
 function cellClickHandler(row, col) {
-    if (isWin) return;
+    if (isWin || stepNumber === field.length * field.length) return;
 
     console.log(`Clicked on cell: ${row}, ${col}`);
     if (!field[row][col]) {
@@ -54,14 +54,17 @@ function cellClickHandler(row, col) {
         if (winner) {
             alert(`Победил игрок ${winner}!`);
             isWin = true;
+            return;
         } else if (stepNumber === field.length * field.length) {
-            alert("Победила дружба");
+            alert('Победила дружба');
             return;
         }
 
-        currentPlayer = currentPlayer === CROSS ? ZERO : CROSS;
+        if (currentPlayer === CROSS) {
+            makeAIMove(ZERO);
+        }
     } else {
-        console.log('Клетка уже занята!');
+        console.log('Клетка уже занята ٩(ఠ益ఠ)۶');
     }
 
     /* Пользоваться методом для размещения символа в клетке так:
@@ -130,6 +133,37 @@ function resetClickHandler() {
     currentPlayer = CROSS;
     isWin = false;
     renderGrid(gridSize);
+}
+
+function makeAIMove(symbol = ZERO) {
+    if (isWin || stepNumber === field.length * field.length) return;
+
+    const emptyCells = [];
+    for (let row = 0; row < field.length; row++) {
+        for (let col = 0; col < field[row].length; col++) {
+            if (!field[row][col]) {
+                emptyCells.push({ row, col });
+            }
+        }
+    }
+
+    if (emptyCells.length === 0) return;
+
+    const randomIndex = Math.floor(Math.random() * emptyCells.length);
+    const { row, col } = emptyCells[randomIndex];
+
+    field[row][col] = symbol;
+    renderSymbolInCell(symbol, row, col);
+
+    const winner = checkWinner();
+    if (winner) {
+        alert(`Победил игрок ${winner}!`);
+        isWin = true;
+    } else if (stepNumber === field.length * field.length) {
+        alert('Победила дружба');
+    }
+
+    currentPlayer = CROSS;
 }
 
 addResetListener();
