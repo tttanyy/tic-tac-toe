@@ -7,6 +7,9 @@ const container = document.getElementById('fieldWrapper');
 let field = [[null, null, null], [null, null, null], [null, null, null]]
 
 let stepNumber = 0;
+let currentPlayer = CROSS;
+let isWin = false;
+
 
 startGame();
 addResetListener();
@@ -31,13 +34,22 @@ function renderGrid (dimension) {
 }
 
 function cellClickHandler (row, col) {
-    // Пиши код тут
     console.log(`Clicked on cell: ${row}, ${col}`);
 
     if (!field[row][col]) {
-        field[row][col] = 'x'
-        renderSymbolInCell(CROSS, row, col);
+        field[row][col] = currentPlayer; 
+        renderSymbolInCell(currentPlayer, row, col); 
+
         stepNumber++;
+
+        if (stepNumber === field.length * field.length) {
+            alert("Победила дружба");
+            return;
+        }
+
+        currentPlayer = currentPlayer === CROSS ? ZERO : CROSS;
+    } else {
+        console.log('Cell is already taken!');
     }
 
     /* Пользоваться методом для размещения символа в клетке так:
